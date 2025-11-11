@@ -63,6 +63,8 @@ type ZambdaName =
   | 'get patients'
   | 'get payment methods'
   | 'get presigned file url'
+  | 'get z3 download link'
+  | 'import wellness'
   | 'get telemed states'
   | 'get wait status'
   | 'join call'
@@ -91,6 +93,8 @@ const zambdasPublicityMap: Record<ZambdaName, boolean> = {
   'get patients': false,
   'get payment methods': false,
   'get presigned file url': true,
+  'get z3 download link': false,
+  'import wellness': false,
   'get telemed states': true,
   'get wait status': true,
   'join call': true,
@@ -138,6 +142,8 @@ export const getOystehrAPI = (
   videoChatCreateInvite: typeof videoChatCreateInvite;
   videoChatListInvites: typeof videoChatListInvites;
   listBookables: typeof listBookables;
+  getZ3DownloadLink: typeof getZ3DownloadLink;
+  importWellness: typeof importWellness;
 } => {
   const {
     cancelAppointmentZambdaID,
@@ -154,6 +160,8 @@ export const getOystehrAPI = (
     getPatientsZambdaID,
     getPaymentMethodsZambdaID,
     getPresignedFileURLZambdaID,
+    getZ3DownloadLinkZambdaID,
+    importWellnessZambdaID,
     getTelemedLocationsZambdaID: getTelemedStatesZambdaID,
     getWaitStatusZambdaID,
     joinCallZambdaID,
@@ -183,6 +191,8 @@ export const getOystehrAPI = (
     'get patients': getPatientsZambdaID,
     'get payment methods': getPaymentMethodsZambdaID,
     'get presigned file url': getPresignedFileURLZambdaID,
+    'get z3 download link': getZ3DownloadLinkZambdaID,
+    'import wellness': importWellnessZambdaID,
     'get telemed states': getTelemedStatesZambdaID,
     'get wait status': getWaitStatusZambdaID,
     'join call': joinCallZambdaID,
@@ -409,6 +419,17 @@ export const getOystehrAPI = (
     return await makeZapRequest('list bookables', parameters);
   };
 
+  const getZ3DownloadLink = async (z3Url: string): Promise<any> => {
+    const payload = {
+      z3Url,
+    };
+    return await makeZapRequest('get z3 download link', payload);
+  };
+
+  const importWellness = async (data: string): Promise<any> => {
+    return await makeZapRequest('import wellness', data);
+  };
+
   return {
     cancelAppointment,
     checkIn,
@@ -437,6 +458,8 @@ export const getOystehrAPI = (
     videoChatCreateInvite,
     videoChatListInvites,
     listBookables,
+    getZ3DownloadLink,
+    importWellness,
   };
 };
 

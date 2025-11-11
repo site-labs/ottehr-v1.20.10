@@ -18,6 +18,8 @@ export type GetOystehrAPIParams = {
   getPatientsZambdaID?: string;
   getPaymentMethodsZambdaID?: string;
   getPresignedFileURLZambdaID?: string;
+  getZ3DownloadLinkZambdaID?: string;
+  importWellnessZambdaID?: string;
   getTelemedLocationsZambdaID?: string;
   getWaitStatusZambdaID?: string;
   isAppLocal?: 'true' | 'false';

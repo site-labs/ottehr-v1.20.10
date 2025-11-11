@@ -1,7 +1,10 @@
 import { useAuth0 } from '@auth0/auth0-react';
-import { AppBar, Box, Button, Card, Container, Grid, Typography, useTheme } from '@mui/material';
+import HomeIcon from '@mui/icons-material/Home';
+import { AppBar, Box, Button, Card, Container, Grid, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 import { FC, ReactElement, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { intakeFlowPageRoute } from 'src/App';
 import { dataTestIds } from '../helpers/data-test-ids';
 
 export interface ContainerProps {
@@ -75,6 +78,7 @@ export const CustomContainer: FC<ContainerProps> = ({
   logoutHandler,
   patientFullName,
 }) => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const { isAuthenticated, logout } = useAuth0();
   const { t } = useTranslation();
@@ -106,7 +110,6 @@ export const CustomContainer: FC<ContainerProps> = ({
       <AppBar
         data-testid={isAuthenticated ? dataTestIds.header.authenticated : dataTestIds.header.unauthenticated} // used in e2e login test, dont remove
         position="static"
-        sx={{ backgroundColor: theme.palette.primary.dark }}
       >
         <Grid container justifyContent="center" alignItems="center" sx={{ position: 'relative' }}>
           <Grid item>
@@ -129,6 +132,16 @@ export const CustomContainer: FC<ContainerProps> = ({
                 maxWidth: { xs: '20%', md: 'unset' },
               }}
             >
+              <Tooltip title="Patient Portal" arrow>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    navigate(intakeFlowPageRoute.Homepage.path);
+                  }}
+                >
+                  <HomeIcon />
+                </IconButton>
+              </Tooltip>
               <Button
                 variant="text"
                 onClick={handleLogout}

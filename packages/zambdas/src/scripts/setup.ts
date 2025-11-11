@@ -156,7 +156,7 @@ export async function setupEHR(
 ): Promise<void> {
   console.log('Starting setup of EHR...');
 
-  const applicationName = `${PROJECT_NAME} EHR`;
+  const applicationName = `${PROJECT_NAME} EHR Sitelabs`;
   const [applicationId, clientId] = await createApplication(oystehr, applicationName);
   console.log(`Created application "${applicationName}".`);
 

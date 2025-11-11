@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { PROJECT_NAME, PROJECT_WEBSITE } from 'utils';
 import { useClearStores } from '../features';
 import { useIntakeCommonStore } from '../features/common';
-import { ottehrLogo as logo } from '../themes/ottehr';
+import { SiteLabsLogo as logo } from '../themes/siteLabs';
 import { ContainerProps, CustomContainer } from './CustomContainerFactory';
 import Footer from './Footer';
 

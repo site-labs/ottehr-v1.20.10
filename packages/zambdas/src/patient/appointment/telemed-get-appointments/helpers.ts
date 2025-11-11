@@ -50,14 +50,14 @@ export async function getFhirResources(
         name: '_include',
         value: 'Appointment:location',
       },
-      // {
-      //   name: '_revinclude:iterate',
-      //   value: 'DocumentReference:patient',
-      // },
-      // {
-      //   name: '_revinclude:iterate',
-      //   value: 'QuestionnaireResponse:encounter',
-      // },
+      {
+        name: '_revinclude:iterate',
+        value: 'DocumentReference:patient',
+      },
+      {
+        name: '_revinclude:iterate',
+        value: 'QuestionnaireResponse:encounter',
+      },
     ],
   };
   const bundle = await oystehr.fhir.search<Appointment | Encounter | Location | Patient | RelatedPerson>(

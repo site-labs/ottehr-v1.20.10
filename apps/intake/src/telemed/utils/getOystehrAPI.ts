@@ -26,6 +26,8 @@ export const useOystehrAPIClient = (
         getPatientsZambdaID: 'telemed-get-patients',
         getPaymentMethodsZambdaID: 'payment-methods-list',
         getPresignedFileURLZambdaID: 'get-presigned-file-url',
+        getZ3DownloadLinkZambdaID: 'get-z3-download-link',
+        importWellnessZambdaID: 'import-wellness',
         getTelemedLocationsZambdaID: 'get-telemed-locations',
         getWaitStatusZambdaID: 'get-wait-status',
         isAppLocal: VITE_APP_IS_LOCAL as 'true' | 'false' | undefined,

@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { generatePath, Outlet, useNavigate, useOutletContext, useParams } from 'react-router-dom';
+import { usePatientInfoStore } from 'src/telemed/features/patient-info';
 import { APIError, getPatientInfoFullName, isApiError, PatientInfo, useErrorQuery } from 'utils';
 import ottehrApi from '../api/ottehrApi';
 import { intakeFlowPageRoute } from '../App';
@@ -72,7 +73,10 @@ const MyPatients = (): JSX.Element => {
       return;
     }
 
-    const destination = generatePath(intakeFlowPageRoute.PastVisits.path, {
+    const selectedPatient = patientsData?.patients.find((patient: PatientInfo) => patient.id === patientID);
+    usePatientInfoStore.setState(() => ({ patientInfo: selectedPatient }));
+
+    const destination = generatePath(intakeFlowPageRoute.WellnessScreenings.path, {
       patientId: patientID,
     });
     navigate(destination);
@@ -89,11 +93,11 @@ const MyPatients = (): JSX.Element => {
   }
 
   return (
-    <PageContainer title={selectedPatient ? patientFullName : 'My patients'} subtext={formattedPatientBirthDay}>
+    <PageContainer title={selectedPatient ? patientFullName : 'Select patient'} subtext={formattedPatientBirthDay}>
       {isRoot && (
         <PatientList
           patients={patientsData.patients}
-          subtitle="Choose a patient to see their past visits"
+          subtitle="Select patient"
           pastVisits={true}
           bottomMessage={bottomMessage}
           onSubmit={onSubmit}

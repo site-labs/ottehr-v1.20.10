@@ -30,6 +30,7 @@ import StartVirtualVisit from './pages/StartVirtualVisit';
 import ThankYou from './pages/ThankYou';
 import VisitDetails from './pages/VisitDetails';
 import { WalkinLanding } from './pages/WalkinLanding';
+import WellnessScreenings from './pages/WellnessScreenings';
 import { ErrorAlert } from './telemed/components/ErrorAlert';
 import { IOSMessagesHandler } from './telemed/components/IOSMessagesHandler';
 import { ProtectedRoute } from './telemed/features/auth';
@@ -109,6 +110,10 @@ export const intakeFlowPageRoute = {
   PastVisits: {
     path: '/my-patients/:patientId/past-visits',
     getPage: () => <PastVisits />,
+  },
+  WellnessScreenings: {
+    path: '/my-patients/:patientId/wellness-screenings',
+    getPage: () => <WellnessScreenings />,
   },
   VisitDetails: {
     path: '/my-patients/:patientId/past-visits/:visitId',
@@ -426,6 +431,10 @@ function App(): JSX.Element {
                   element={intakeFlowPageRoute.IOSCallEnded.getPage()}
                 />
               </Route>
+              <Route
+                path={intakeFlowPageRoute.WellnessScreenings.path}
+                element={intakeFlowPageRoute.WellnessScreenings.getPage()}
+              />
               <Route
                 path={intakeFlowPageRoute.TestErrorPage.path}
                 element={intakeFlowPageRoute.TestErrorPage.getPage()}

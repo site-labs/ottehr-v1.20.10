@@ -23,3 +23,10 @@ yarn-error.log*
 .env.development.local
 .env.production.local
 tests.local
+
+# Log files
+*.log
+serverless.log
+
+# Test scripts (if you don't want them committed)
+test-*.sh
