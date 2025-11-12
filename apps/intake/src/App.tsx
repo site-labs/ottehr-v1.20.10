@@ -20,6 +20,7 @@ import WelcomeBack from './pages/ChoosePatient';
 import ConfirmDateOfBirth from './pages/ConfirmDateOfBirth';
 import Homepage from './pages/Homepage';
 import MyPatients from './pages/MyPatients';
+import MyPatientsConfirmDateOfBirth from './pages/MyPatientsConfirmDateOfBirth';
 import { PaperworkHome, PaperworkPage } from './pages/PaperworkPage';
 import PastVisits from './pages/PastVisits';
 import PatientInformation from './pages/PatientInformation';
@@ -106,6 +107,10 @@ export const intakeFlowPageRoute = {
   MyPatients: {
     path: '/my-patients',
     getPage: () => <MyPatients />,
+  },
+  MyPatientsConfirmDateOfBirth: {
+    path: '/my-patients/:patientId/confirm-date-of-birth',
+    getPage: () => <MyPatientsConfirmDateOfBirth />,
   },
   PastVisits: {
     path: '/my-patients/:patientId/past-visits',
@@ -333,6 +338,10 @@ function App(): JSX.Element {
               <Route
                 element={<ProtectedRoute loadingFallback={<LoadingScreen />} errorFallback={<ErrorFallbackScreen />} />}
               >
+                <Route
+                  path={intakeFlowPageRoute.MyPatientsConfirmDateOfBirth.path}
+                  element={intakeFlowPageRoute.MyPatientsConfirmDateOfBirth.getPage()}
+                />
                 <Route path={intakeFlowPageRoute.MyPatients.path} element={intakeFlowPageRoute.MyPatients.getPage()}>
                   <Route
                     path={intakeFlowPageRoute.PastVisits.path}

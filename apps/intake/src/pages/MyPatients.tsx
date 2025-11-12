@@ -76,7 +76,7 @@ const MyPatients = (): JSX.Element => {
     const selectedPatient = patientsData?.patients.find((patient: PatientInfo) => patient.id === patientID);
     usePatientInfoStore.setState(() => ({ patientInfo: selectedPatient }));
 
-    const destination = generatePath(intakeFlowPageRoute.WellnessScreenings.path, {
+    const destination = generatePath(intakeFlowPageRoute.MyPatientsConfirmDateOfBirth.path, {
       patientId: patientID,
     });
     navigate(destination);

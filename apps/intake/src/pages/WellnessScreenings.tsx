@@ -67,7 +67,6 @@ export const WellnessScreening = (): JSX.Element => {
       title={patientFullName}
       subtext={t('general.dateOfBirth', { formattedPatientBirthDay })}
       description=""
-      bgVariant={intakeFlowPageRoute.MyPatients.path}
       isFirstPage={true}
     >
       {isFetching && (

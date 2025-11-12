@@ -1,5 +1,4 @@
 import { Box } from '@mui/system';
-import { DateTime } from 'luxon';
 import { useMemo } from 'react';
 import { FieldValues } from 'react-hook-form';
 import { getPatientInfoFullName, PatientInfo } from 'utils';
@@ -53,9 +52,9 @@ const PatientList: React.FC<PatientListProps> = ({
                 }
                 return {
                   label: getPatientInfoFullName(patient),
-                  description: `Birthday: ${DateTime.fromFormat(patient.dateOfBirth || '', 'yyyy-MM-dd').toFormat(
-                    'MMMM dd, yyyy'
-                  )}`,
+                  // description: `Birthday: ${DateTime.fromFormat(patient.dateOfBirth || '', 'yyyy-MM-dd').toFormat(
+                  //   'MMMM dd, yyyy'
+                  // )}`,
                   value: patient.id,
                   color: otherColors.lightBlue,
                 };
