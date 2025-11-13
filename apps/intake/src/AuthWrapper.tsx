@@ -63,8 +63,10 @@ const LoginOptions: React.FC = () => {
         <button
           onClick={() =>
             loginWithRedirect({
-              connection: import.meta.env.VITE_APP_CONNECTION_NAME,
-              appState: { returnTo: window.location.pathname },
+              appState: {
+                returnTo: window.location.pathname,
+                authorizationParams: { connection: 'sms' },
+              },
             })
           }
           style={{
@@ -78,7 +80,10 @@ const LoginOptions: React.FC = () => {
         <button
           onClick={() =>
             loginWithRedirect({
-              appState: { returnTo: window.location.pathname },
+              appState: {
+                returnTo: window.location.pathname,
+                authorizationParams: { connection: 'email' },
+              },
             })
           }
           style={{
@@ -100,7 +105,7 @@ export const AuthenticationWrapper: React.FC<{ children: React.ReactNode }> = ({
     clientId: VITE_APP_CLIENT_ID,
     authorizationParams: {
       // connection: 'sms',
-      redirectUri: `${window.location.origin}/redirect`,
+      redirect_uri: `${window.location.origin}/redirect`,
       audience: VITE_APP_AUTH0_AUDIENCE,
       scope: 'openid profile email offline_access',
     },
