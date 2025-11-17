@@ -63,9 +63,9 @@ const LoginOptions: React.FC = () => {
         <button
           onClick={() =>
             loginWithRedirect({
+              authorizationParams: { connection: 'sms' },
               appState: {
                 returnTo: window.location.pathname,
-                authorizationParams: { connection: 'sms' },
               },
             })
           }
