@@ -1,6 +1,6 @@
 import './index.css';
 import './lib/i18n';
-import { Auth0Provider, useAuth0 } from '@auth0/auth0-react';
+import { Auth0Provider, CacheLocation, useAuth0 } from '@auth0/auth0-react';
 import hasOwn from 'object.hasown';
 import React from 'react';
 import App from './App';
@@ -113,7 +113,7 @@ export const AuthenticationWrapper: React.FC<{ children: React.ReactNode }> = ({
     useRefreshTokensFallback: true,
     // adding cache location so that auth persists on page refresh
     // https://stackoverflow.com/questions/63537913/auth0-does-not-persist-login-on-page-refresh-for-email-password
-    cacheLocation: 'localstorage',
+    cacheLocation: 'localstorage' as CacheLocation,
     onRedirectCallback: (appState: any) => {
       // If the appState is not defined, we can just return
       if (!appState || !appState.target) {

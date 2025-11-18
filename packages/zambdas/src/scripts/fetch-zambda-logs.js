@@ -22,6 +22,8 @@ const { writeFile, mkdir, access, readFile } = require('fs').promises;
 const fs = require('fs');
 const path = require('path');
 
+const zambdasToSkip = ['notifications-updater'];
+
 // Try to load local env file (packages/zambdas/.env/local.json) and fall back to process.env
 let fileEnv = {};
 try {
@@ -51,7 +53,7 @@ const mask = (s = '') => (s.length > 10 ? `${s.slice(0, 6)}...${s.slice(-4)} (le
 console.log('Using BASE_URL=', BASE_URL);
 console.log('Using PROJECT_ID=', mask(PROJECT_ID));
 console.log('Using TOKEN=', mask(TOKEN));
-const OUT_DIR = path.resolve(process.cwd(), '.dist', 'logs');
+const OUT_DIR = path.resolve(process.cwd(), '.dist', 'logs-' + process.env.ENV);
 
 if (!TOKEN || !PROJECT_ID) {
   console.error('Environment variables PROJECT_ACCESS_TOKEN and PROJECT_ID are required.');
@@ -167,8 +169,9 @@ async function run() {
   }
 
   await ensureDir(OUT_DIR);
+  const filteredZambdas = zambdas.filter((z) => !zambdasToSkip.includes(z.name));
 
-  for (const z of zambdas) {
+  for (const z of filteredZambdas) {
     const id = z.id || z._id || z.name; // be flexible
     const name = z.name || id;
     const safeName = sanitizeFilename(name);
