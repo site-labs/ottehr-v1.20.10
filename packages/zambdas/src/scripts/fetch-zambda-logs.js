@@ -23,6 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const zambdasToSkip = ['notifications-updater'];
+const zambdasToFetch = []; // empty = fetch all, { id: 'zambda-id', name: 'zambda-name' }
 
 // Try to load local env file (packages/zambdas/.env/local.json) and fall back to process.env
 let fileEnv = {};
@@ -162,7 +163,7 @@ async function fetchLogEvents(zambdaId, logStreamName) {
 
 async function run() {
   console.log('Listing zambdas...');
-  const zambdas = await listZambdas();
+  const zambdas = zambdasToFetch.length > 0 ? zambdasToFetch : await listZambdas();
   if (!Array.isArray(zambdas)) {
     console.error('Unexpected response from list zambdas:', zambdas);
     process.exit(1);
