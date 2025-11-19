@@ -103,11 +103,10 @@ async function listLogStreams(zambdaId) {
   let nextToken = undefined;
   const seenTokens = new Set();
   while (true) {
-    const q = nextToken ? `?token=${encodeURIComponent(nextToken)}` : '';
-    const url = `${BASE_URL}/v1/zambda/${encodeURIComponent(zambdaId)}/logStream${q}`;
-    const body = null;
-    console.log('Listing log streams with URL:', url);
-    const res = await fetchJson(url, { method: 'POST', headers });
+    const url = `${BASE_URL}/v1/zambda/${encodeURIComponent(zambdaId)}/logStream`;
+    const body = nextToken ? { token: nextToken } : {};
+    console.log('Listing log streams with URL:', url, 'body:', body);
+    const res = await fetchJson(url, { method: 'POST', headers, body: JSON.stringify(body) });
     if (Array.isArray(res.logStreams)) {
       for (const s of res.logStreams) logStreams.push(s.logStreamName);
     }
@@ -190,6 +189,8 @@ async function run() {
       console.log('No log streams for', name);
       continue;
     }
+    console.log(`++++---- Found ${streams.length} log streams for ${name}`);
+
     for (const streamName of streams) {
       console.log(` Fetching events for stream ${streamName}`);
       try {
