@@ -70,6 +70,7 @@ async function fetchJson(url, opts = {}) {
   for (const z of zambdas) {
     const id = z.id || z._id || z.name;
     const name = z.name || id;
+    const triggerMethod = z.triggerMethod || 'http_auth';
     if (name.startsWith(prefix)) {
       console.log('Skipping (already prefixed):', name);
       results.push({ id, oldName: name, newName: name, skipped: true });
@@ -80,10 +81,11 @@ async function fetchJson(url, opts = {}) {
     if (!dryRun) {
       const patchUrl = `${BASE_URL}/v1/zambda/${encodeURIComponent(id)}`;
       const body = JSON.stringify({
-        schedule: { retryPolicy: { maximumEventAge: 90, maximumRetry: 0 } },
         memorySize: 1024,
         timeoutInSeconds: 27,
         name: newName,
+        runtime: "nodejs20.x",
+        triggerMethod: triggerMethod,
       });
       try {
         const updated = await fetchJson(patchUrl, { method: 'PATCH', headers, body });
