@@ -1,0 +1,57 @@
+name: Deploy Zambdas
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # link job to GitHub Environment (needs approvals/limits on environment secrets)
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+      - name: Checkout (use branch selected in UI)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies (root)
+        run: npm ci
+
+      - name: Prepare env JSON for packages/zambdas
+        env:
+          AUTH0_ENDPOINT: ${{ secrets.AUTH0_ENDPOINT }},
+          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }},
+          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }},
+          AUTH0_CLIENT: ${{ secrets.AUTH0_CLIENT }}
+        run: |
+          mkdir -p packages/zambdas/.env
+          ENV="${{ github.event.inputs.environment }}"
+          cat > packages/zambdas/.env/${ENV}.json <<EOF
+            {
+              "AUTH0_ENDPOINT": "${AUTH0_ENDPOINT}",
+              "AUTH0_AUDIENCE": "${AUTH0_AUDIENCE}",
+              "AUTH0_SECRET": "${AUTH0_SECRET}",
+              "AUTH0_CLIENT": "${AUTH0_CLIENT}"
+            }
+            EOF
+      - name: Deploy zambdas
+        working-directory: packages/zambdas
+        run: |
+          ENV="${{ github.event.inputs.environment }}" npm run deploy-zambdas
+
+      - name: Remove sensitive env file
+        run: rm -f packages/zambdas/.env/${{ github.event.inputs.environment }}.json
