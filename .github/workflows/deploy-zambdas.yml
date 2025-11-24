@@ -33,25 +33,25 @@ jobs:
 
       - name: Prepare env JSON for packages/zambdas
         env:
-          AUTH0_ENDPOINT: ${{ secrets.AUTH0_ENDPOINT }},
-          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }},
-          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }},
+          AUTH0_ENDPOINT: ${{ secrets.AUTH0_ENDPOINT }}
+          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
           AUTH0_CLIENT: ${{ secrets.AUTH0_CLIENT }}
         run: |
           mkdir -p packages/zambdas/.env
           ENV="${{ github.event.inputs.environment }}"
-          cat > packages/zambdas/.env/${ENV}.json <<EOF
+          cat > packages/zambdas/.env/${ENV}.json <<-EOF
             {
               "AUTH0_ENDPOINT": "${AUTH0_ENDPOINT}",
               "AUTH0_AUDIENCE": "${AUTH0_AUDIENCE}",
               "AUTH0_SECRET": "${AUTH0_SECRET}",
               "AUTH0_CLIENT": "${AUTH0_CLIENT}"
             }
-            EOF
+          EOF
       - name: Deploy zambdas
         working-directory: packages/zambdas
         run: |
-          ENV="${{ github.event.inputs.environment }}" npm run deploy-zambdas
+          ENV="${{ github.event.inputs.environment }}" npm run deploy-zambdas ${{ github.event.inputs.environment }}
 
       - name: Remove sensitive env file
         run: rm -f packages/zambdas/.env/${{ github.event.inputs.environment }}.json
