@@ -32,6 +32,7 @@ Checklist
 
 Example trust policy (replace account ID and owner/repo):
 
+```bash
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -52,6 +53,7 @@ Example trust policy (replace account ID and owner/repo):
     }
   ]
 }
+```
 
 Notes:
 - To restrict to a single branch (e.g. main) use:
@@ -62,6 +64,7 @@ Notes:
 - Create an IAM policy that grants only the permissions required for your deployment.
 - Example S3 + CloudFront policy (replace bucket and distribution ID):
 
+```bash
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -91,6 +94,7 @@ Notes:
     }
   ]
 }
+```
 
 Notes:
 - CloudFront actions may require "*" for Resource; limit via other means when possible.
@@ -116,6 +120,7 @@ Notes:
 
 Example job snippet:
 
+```bash
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -143,6 +148,7 @@ jobs:
 
           cd apps/intake
           ENV=${{ github.event.inputs.environment }} npm run ci-deploy:${{ github.event.inputs.environment }}
+```
 
 Key points:
 - The job must have "permissions: id-token: write" so GitHub issues an OIDC token.
