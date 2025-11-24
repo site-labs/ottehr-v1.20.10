@@ -1,18 +1,18 @@
 {
   "zambdas": {
     "GET-Z3-DOWNLOAD-LINK": {
-      "name": "get-z3-download-link-test",
+      "name": "get-z3-download-link",
       "type": "http_auth",
       "runtime": "nodejs20.x",
       "src": "src/patient/get-z3-download-link/index",
-      "zip": ".dist/zips/get-z3-download-link-test.zip"
+      "zip": ".dist/zips/get-z3-download-link.zip"
     },
     "IMPORT-WELLNESS": {
-      "name": "import-wellness-test",
+      "name": "import-wellness",
       "type": "http_auth",
       "runtime": "nodejs20.x",
       "src": "src/patient/import-wellness/index",
-      "zip": ".dist/zips/import-wellness-test.zip"
+      "zip": ".dist/zips/import-wellness.zip"
     }
   }
 }
