@@ -1,0 +1,18 @@
+{
+  "zambdas": {
+    "GET-Z3-DOWNLOAD-LINK": {
+      "name": "get-z3-download-link--V1-20-10",
+      "type": "http_auth",
+      "runtime": "nodejs20.x",
+      "src": "src/patient/get-z3-download-link/index",
+      "zip": ".dist/zips/get-z3-download-link--V1-20-10.zip"
+    },
+    "IMPORT-WELLNESS": {
+      "name": "import-wellness--V1-20-10",
+      "type": "http_auth",
+      "runtime": "nodejs20.x",
+      "src": "src/patient/import-wellness/index",
+      "zip": ".dist/zips/import-wellness--V1-20-10.zip"
+    }
+  }
+}

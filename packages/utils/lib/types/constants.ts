@@ -2,11 +2,12 @@ export const TELEMED_VIDEO_ROOM_CODE = 'chime-video-meetings';
 
 export const INTERPRETER_PHONE_NUMBER = '(888) 555 0002';
 
-export const PROJECT_NAME = 'Ottehr';
+export const PROJECT_NAME = 'SiteLabs Patient Portal';
+export const PROJECT_NAME_SHORT = 'SiteLabs';
 export const PROJECT_NAME_LOWER = PROJECT_NAME.toLowerCase();
-export const PROJECT_DOMAIN = 'ottehr.com';
+export const PROJECT_DOMAIN = 'sitelabsglobal.com';
 export const PROJECT_WEBSITE = `https://${PROJECT_DOMAIN}`;
-export const SUPPORT_EMAIL = 'support@ottehr.com';
+export const SUPPORT_EMAIL = 'support@sitelabsglobal.com';
 
 export const PATIENT_INDIVIDUAL_PRONOUNS_URL = 'http://hl7.org/fhir/StructureDefinition/individual-pronouns';
 export const PATIENT_INDIVIDUAL_PRONOUNS_CUSTOM_URL =

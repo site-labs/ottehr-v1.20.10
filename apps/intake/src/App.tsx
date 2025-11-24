@@ -20,6 +20,7 @@ import WelcomeBack from './pages/ChoosePatient';
 import ConfirmDateOfBirth from './pages/ConfirmDateOfBirth';
 import Homepage from './pages/Homepage';
 import MyPatients from './pages/MyPatients';
+import MyPatientsConfirmDateOfBirth from './pages/MyPatientsConfirmDateOfBirth';
 import { PaperworkHome, PaperworkPage } from './pages/PaperworkPage';
 import PastVisits from './pages/PastVisits';
 import PatientInformation from './pages/PatientInformation';
@@ -30,6 +31,7 @@ import StartVirtualVisit from './pages/StartVirtualVisit';
 import ThankYou from './pages/ThankYou';
 import VisitDetails from './pages/VisitDetails';
 import { WalkinLanding } from './pages/WalkinLanding';
+import WellnessScreenings from './pages/WellnessScreenings';
 import { ErrorAlert } from './telemed/components/ErrorAlert';
 import { IOSMessagesHandler } from './telemed/components/IOSMessagesHandler';
 import { ProtectedRoute } from './telemed/features/auth';
@@ -106,9 +108,17 @@ export const intakeFlowPageRoute = {
     path: '/my-patients',
     getPage: () => <MyPatients />,
   },
+  MyPatientsConfirmDateOfBirth: {
+    path: '/my-patients/:patientId/confirm-date-of-birth',
+    getPage: () => <MyPatientsConfirmDateOfBirth />,
+  },
   PastVisits: {
     path: '/my-patients/:patientId/past-visits',
     getPage: () => <PastVisits />,
+  },
+  WellnessScreenings: {
+    path: '/my-patients/:patientId/wellness-screenings',
+    getPage: () => <WellnessScreenings />,
   },
   VisitDetails: {
     path: '/my-patients/:patientId/past-visits/:visitId',
@@ -328,6 +338,10 @@ function App(): JSX.Element {
               <Route
                 element={<ProtectedRoute loadingFallback={<LoadingScreen />} errorFallback={<ErrorFallbackScreen />} />}
               >
+                <Route
+                  path={intakeFlowPageRoute.MyPatientsConfirmDateOfBirth.path}
+                  element={intakeFlowPageRoute.MyPatientsConfirmDateOfBirth.getPage()}
+                />
                 <Route path={intakeFlowPageRoute.MyPatients.path} element={intakeFlowPageRoute.MyPatients.getPage()}>
                   <Route
                     path={intakeFlowPageRoute.PastVisits.path}
@@ -426,6 +440,10 @@ function App(): JSX.Element {
                   element={intakeFlowPageRoute.IOSCallEnded.getPage()}
                 />
               </Route>
+              <Route
+                path={intakeFlowPageRoute.WellnessScreenings.path}
+                element={intakeFlowPageRoute.WellnessScreenings.getPage()}
+              />
               <Route
                 path={intakeFlowPageRoute.TestErrorPage.path}
                 element={intakeFlowPageRoute.TestErrorPage.getPage()}

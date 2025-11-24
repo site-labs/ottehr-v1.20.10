@@ -66,7 +66,8 @@ export default (env: any): Record<string, any> => {
       },
       resolve: {
         alias: {
-          '@theme': path.resolve(__dirname, appEnv.THEME_PATH || '/src/themes/ottehr'),
+          // Default to the siteLabs theme unless THEME_PATH is provided in env
+          '@theme': path.resolve(__dirname, appEnv.THEME_PATH || 'src/themes/siteLabs'),
           '@defaultTheme': path.resolve(__dirname, '/src/themes/ottehr'),
         },
       },

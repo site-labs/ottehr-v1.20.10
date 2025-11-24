@@ -2,24 +2,20 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { Box, Typography } from '@mui/material';
 import { FC, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useLocation, useParams } from 'react-router-dom';
-import { bookingBasePath } from '../App';
 import { ContactSupportDialog } from './ContactSupportDialog';
 import QuestionMarkButton from './QuestionMarkButton';
 
 const Footer: FC = () => {
   const { t } = useTranslation();
-  const location = useLocation();
 
-  const { BOOKING_SLOT_ID_PARAM: slotIdParam } = useParams();
   const [supportDialogOpen, setSupportDialogOpen] = useState(false);
 
   // only show on the review page
-  const reviewPgPath =
-    generatePath(bookingBasePath, {
-      slotId: slotIdParam ?? '',
-    }) + '/review';
-  const showFooter = location.pathname === reviewPgPath;
+  // const reviewPgPath =
+  //   generatePath(bookingBasePath, {
+  //     slotId: slotIdParam ?? '',
+  //   }) + '/review';
+  const showFooter = true; //location.pathname === reviewPgPath;
 
   return (
     <Box sx={{ position: 'sticky', bottom: 0, pointerEvents: 'none' }}>

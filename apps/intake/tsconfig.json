@@ -11,7 +11,7 @@
     "noUnusedParameters": false,
     "baseUrl": ".",
     "paths": {
-      "@theme/*": ["src/themes/ottehr/*"],
+      "@theme/*": ["src/themes/siteLabs/*", "src/themes/ottehr/*"],
       "@defaultTheme/*": ["src/themes/ottehr/*"]
     }
   },

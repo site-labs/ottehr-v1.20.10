@@ -1,10 +1,10 @@
-import { ottehrLogo } from '@theme/index';
+import { SiteLabsLogo } from '@theme/index';
+import { CustomContainerFactory } from 'src/components/CustomContainerFactory';
+import Footer from 'src/telemed/components/Footer';
 import { PROJECT_NAME } from 'utils';
-import { CustomContainerFactory } from '../../../components/CustomContainerFactory';
-import Footer from '../../components/Footer';
 
 export const CustomContainer = CustomContainerFactory({
-  logo: ottehrLogo,
+  logo: SiteLabsLogo,
   alt: PROJECT_NAME,
   footer: <Footer />,
   showLanguagePicker: false,

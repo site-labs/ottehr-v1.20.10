@@ -3,6 +3,7 @@ import { Subscription } from 'fhir/r4b';
 import fs from 'fs';
 import { SubscriptionZambdaDetails } from 'utils';
 import ottehrSpec from '../../../../config/oystehr/ottehr-spec.json';
+// import ottehrSpec from '../../../../config/oystehr/ottehr-spec-zambdas.json';
 import { getAuth0Token } from '../shared';
 
 interface DeployZambda {
@@ -57,8 +58,10 @@ Object.entries(ottehrSpec.zambdas).forEach(([_key, spec]) => {
     };
   }
 
-  const allowableEnvironments = ['staging', 'demo'];
-  if (!allowableEnvironments.includes(process.env.ENVIRONMENT as string) && spec.name === 'SEND-MESSAGE-CRON') {
+  // const allowableEnvironments = ['staging', 'demo'];
+  // if (!allowableEnvironments.includes(process.env.ENVIRONMENT as string) && spec.name === 'SEND-MESSAGE-CRON') {
+  const allowableEnvironments = ['staging', 'demo', 'development'];
+  if (!allowableEnvironments.includes(process.env.ENV as string)) {
     console.log(
       'TODO Skipping zambda because we only want it in these envs:',
       allowableEnvironments.join(', '),

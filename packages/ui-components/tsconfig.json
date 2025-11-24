@@ -5,7 +5,7 @@
     "inlineSources": true,
     "baseUrl": ".",
     "paths": {
-      "@theme/*": ["../../apps/intake/src/themes/ottehr/*"],
+      "@theme/*": ["../../apps/intake/src/themes/siteLabs/*", "../../apps/intake/src/themes/ottehr/*"],
       "@defaultTheme/*": ["../../apps/intake/src/themes/ottehr/*"]
     },
     "target": "esnext",

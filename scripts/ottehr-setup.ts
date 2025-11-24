@@ -36,7 +36,7 @@ async function createM2M(
   let m2m: M2m;
   try {
     m2m = await oystehr.m2m.create({
-      name: 'Example M2M Client',
+      name: 'Sitelabs M2M Client',
       description: 'This M2M Client is used for initial Ottehr setup.',
       accessPolicy: {
         rule: [

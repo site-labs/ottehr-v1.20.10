@@ -1,13 +1,11 @@
 import CloseIcon from '@mui/icons-material/Close';
-import LiveHelpOutlinedIcon from '@mui/icons-material/LiveHelpOutlined';
-import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import VideoCameraFrontOutlinedIcon from '@mui/icons-material/VideoCameraFrontOutlined';
 import { Box, Button, Skeleton, Typography } from '@mui/material';
 import { pastVisits } from '@theme/icons';
 import { useEffect, useMemo, useState } from 'react';
-import { generatePath, useNavigate } from 'react-router-dom';
-import { PROJECT_NAME, ServiceMode } from 'utils';
-import { BOOKING_SERVICE_MODE_PARAM, intakeFlowPageRoute } from '../App';
+import { useNavigate } from 'react-router-dom';
+import { PROJECT_NAME_SHORT } from 'utils';
+import { intakeFlowPageRoute } from '../App';
 import HomepageOption from '../components/HomepageOption';
 import { dataTestIds } from '../helpers/data-test-ids';
 import { otherColors } from '../IntakeThemeProvider';
@@ -18,10 +16,8 @@ import {
   useAppointmentStore,
   useGetAppointments,
 } from '../telemed/features/appointments';
-import { CustomContainer, useIntakeCommonStore } from '../telemed/features/common';
+import { CustomContainer } from '../telemed/features/common';
 import { useOystehrAPIClient } from '../telemed/utils';
-
-const DEFAULT_WALKIN_LOCATION_NAME = import.meta.env.VITE_APP_DEFAULT_WALKIN_LOCATION_NAME;
 
 const Homepage = (): JSX.Element => {
   const apiClient = useOystehrAPIClient();
@@ -39,24 +35,6 @@ const Homepage = (): JSX.Element => {
       void refetch();
     }
   }, [refetch, apiClient]);
-
-  const handleRequestVisit = (): void => {
-    navigate(intakeFlowPageRoute.StartVirtualVisit.path);
-  };
-
-  const handleWalkIn = (): void => {
-    /*
-      This hardcoded location simulates an experience where a patient who walks in to a physical location is given a
-      link to register for a walk-in visit. this might be something a front desk person texts to the individual after getting
-      their phone number, or maybe a link the user opens by scanning a QR code made available at the location. 
-    */
-
-    const basePath = generatePath(intakeFlowPageRoute.WalkinLandingByLocationName.path, {
-      name: DEFAULT_WALKIN_LOCATION_NAME,
-    });
-
-    navigate(basePath);
-  };
 
   const handleReturnToCall = (): void => {
     navigate(`${intakeFlowPageRoute.WaitingRoom.path}?appointment_id=${appointmentID}`);
@@ -76,26 +54,8 @@ const Homepage = (): JSX.Element => {
     navigate(intakeFlowPageRoute.MyPatients.path);
   };
 
-  const handleContactSupport = (): void => {
-    useIntakeCommonStore.setState({ supportDialogOpen: true });
-  };
-
-  const handleInPerson = (): void => {
-    const destination = `${intakeFlowPageRoute.PrebookVisitDynamic.path.replace(
-      `:${BOOKING_SERVICE_MODE_PARAM}`,
-      ServiceMode['in-person']
-    )}?bookingOn=visit-followup-group&scheduleType=group`;
-    navigate(destination);
-  };
-
-  const handleScheduleVirtual = (): void => {
-    navigate(
-      intakeFlowPageRoute.PrebookVisitDynamic.path.replace(`:${BOOKING_SERVICE_MODE_PARAM}`, ServiceMode['virtual'])
-    );
-  };
-
   return (
-    <CustomContainer title={`Welcome to ${PROJECT_NAME}`} description="" isFirstPage={true}>
+    <CustomContainer title={`Welcome to ${PROJECT_NAME_SHORT}`} description="" isFirstPage={true}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {isAppointmentsFetching ? (
           <Skeleton
@@ -144,7 +104,7 @@ const Homepage = (): JSX.Element => {
             {/*  <HomepageOption title="Request a Virtual Visit" icon={requestVisit} handleClick={handleRequestVisit} />*/}
             {/*)}*/}
 
-            <HomepageOption
+            {/* <HomepageOption
               title="Schedule a Virtual Visit"
               icon={<VideoCameraFrontOutlinedIcon />}
               handleClick={handleScheduleVirtual}
@@ -168,23 +128,23 @@ const Homepage = (): JSX.Element => {
               icon={<LocalHospitalOutlinedIcon />}
               handleClick={handleWalkIn}
               dataTestId={dataTestIds.startInPersonVisitButton}
-            />
+            /> */}
             <HomepageOption
-              title="Past Visits"
+              title="Wellness Screenings"
               icon={pastVisits}
               handleClick={handlePastVisits}
-              subtitle="School/Work Notes and Prescriptions"
+              subtitle="View/Download your results"
               dataTestId={dataTestIds.navigatePastVisitsButton}
             />
           </Box>
         )}
 
-        <HomepageOption
+        {/* <HomepageOption
           title="Contact Support"
           icon={<LiveHelpOutlinedIcon />}
           handleClick={handleContactSupport}
           dataTestId={dataTestIds.contactSupportButton}
-        />
+        /> */}
       </Box>
       {isCancelVisitDialogOpen ? (
         <CancelVisitDialog

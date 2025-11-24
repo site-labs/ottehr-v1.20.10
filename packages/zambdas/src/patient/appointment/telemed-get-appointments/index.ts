@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { Appointment, Location, Patient } from 'fhir/r4b';
+import { Appointment, DocumentReference, Location, Patient } from 'fhir/r4b';
 import {
   createOystehrClient,
   getParticipantIdFromAppointment,
@@ -13,6 +13,11 @@ import {
 import { checkOrCreateM2MClientToken, getUser, topLevelCatch, wrapHandler, ZambdaInput } from '../../../shared';
 import { filterTelemedVideoEncounters, getFhirResources } from './helpers';
 import { validateRequestParameters } from './validateRequestParameters';
+
+// Add DocumentReferences to the response type
+interface ExtendedTelemedAppointmentInformationIntake extends TelemedAppointmentInformationIntake {
+  documentReferences?: DocumentReference[];
+}
 
 const ZAMBDA_NAME = 'telemed-get-appointments';
 
@@ -55,7 +60,7 @@ export const index = wrapHandler(ZAMBDA_NAME, async (input: ZambdaInput): Promis
     console.log('allResources awaited');
     const locations = allResources.filter((resource) => resource.resourceType === 'Location') as Location[];
     const encountersMap = filterTelemedVideoEncounters(allResources);
-    const appointments: TelemedAppointmentInformationIntake[] = [];
+    const appointments: ExtendedTelemedAppointmentInformationIntake[] = [];
     allResources
       .filter((resourceTemp) => resourceTemp.resourceType === 'Appointment')
       .forEach((appointmentTemp) => {
@@ -83,7 +88,13 @@ export const index = wrapHandler(ZAMBDA_NAME, async (input: ZambdaInput): Promis
         const stateCode = locations.find((location) => location.id === stateId)?.address?.state;
 
         console.log(`build appointment resource for appointment with id ${fhirAppointment.id}`);
-        const appointment: TelemedAppointmentInformationIntake = {
+        const documentReferences = allResources.filter((resource) => {
+          return (
+            resource.resourceType === 'DocumentReference' &&
+            (resource as DocumentReference).subject?.reference === `Patient/${patient?.id}`
+          );
+        }) as DocumentReference[];
+        const appointment: ExtendedTelemedAppointmentInformationIntake = {
           id: fhirAppointment.id || 'Unknown',
           start: fhirAppointment.start,
           patient: {
@@ -92,7 +103,8 @@ export const index = wrapHandler(ZAMBDA_NAME, async (input: ZambdaInput): Promis
             lastName: patient?.name?.[0].family,
           },
           appointmentStatus: fhirAppointment.status,
-          telemedStatus: telemedStatus,
+          telemedStatus: 'complete', //telemedStatus
+          documentReferences: documentReferences,
           state: { code: stateCode, id: stateId },
         };
         appointments.push(appointment);

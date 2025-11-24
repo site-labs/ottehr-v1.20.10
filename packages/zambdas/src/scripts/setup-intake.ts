@@ -297,7 +297,7 @@ export async function setupIntake(
 ): Promise<void> {
   console.log('Starting setup of Ottehr Patient Portal...');
 
-  const applicationName = 'Ottehr Patient Portal';
+  const applicationName = 'Ottehr Patient Portal Sitelabs';
   const [_, clientId] = await createApplication(oystehr, applicationName);
   console.log(`Created application "${applicationName}".`);
 
