@@ -33,10 +33,10 @@ jobs:
 
       - name: Prepare env JSON for packages/zambdas
         env:
-          AUTH0_ENDPOINT: ${{ secrets.AUTH0_ENDPOINT }}
-          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
-          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
-          AUTH0_CLIENT: ${{ secrets.AUTH0_CLIENT }}
+          AUTH0_ENDPOINT: ${{ vars.AUTH0_ENDPOINT }}
+          AUTH0_AUDIENCE: ${{ vars.AUTH0_AUDIENCE }}
+          AUTH0_SECRET: ${{ secrets.M2M_AUTH0_SECRET }}
+          AUTH0_CLIENT: ${{ vars.M2M_AUTH0_CLIENT }}
         run: |
           mkdir -p packages/zambdas/.env
           ENV="${{ github.event.inputs.environment }}"
