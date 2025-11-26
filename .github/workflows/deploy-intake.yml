@@ -16,6 +16,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}
+    env:
+      AWS_PROFILE: ${{ vars.AWS_PROFILE }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_ID: ${{ vars.CLOUDFRONT_ID }}
+      VITE_APP_IS_LOCAL: ${{ vars.VITE_APP_IS_LOCAL }}
+      VITE_APP_NAME: ${{ vars.VITE_APP_NAME }}
+      VITE_APP_CLIENT_ID: ${{ vars.VITE_APP_CLIENT_ID }}
+      VITE_APP_AUTH_URL: ${{ vars.VITE_APP_AUTH_URL }}
+      VITE_APP_AUTH0_AUDIENCE: ${{ vars.AUTH0_AUDIENCE }}
+      VITE_APP_FHIR_API_URL: ${{ vars.VITE_APP_FHIR_API_URL }}
+      VITE_APP_PROJECT_API_URL: ${{ vars.VITE_APP_PROJECT_API_URL }}
+      VITE_APP_MIXPANEL_TOKEN: ${{ vars.VITE_APP_MIXPANEL_TOKEN }}
+      VITE_APP_GTM_ID: ${{ vars.VITE_APP_GTM_ID }}
+      VITE_APP_STRIPE_KEY: ${{ vars.VITE_APP_STRIPE_KEY }}
+      VITE_APP_AI_INTERVIEW_BANNER_ENABLED: ${{ vars.VITE_APP_AI_INTERVIEW_BANNER_ENABLED }}
+      VITE_APP_ENV: ${{ github.event.inputs.environment }}
+      VITE_APP_PROJECT_ID: ${{ vars.VITE_APP_PROJECT_ID }}
     steps:
       - name: Checkout (use branch selected in UI)
         uses: actions/checkout@v4
@@ -81,8 +99,7 @@ jobs:
         working-directory: apps/intake
         run: |
           ENV=${{ github.event.inputs.environment }}
-          AWS_PROFILE=${{ AWS_PROFILE }}
-          AWS_REGION=${{ AWS_REGION }}
-          S3_BUCKET=${{ S3_BUCKET }}
-          CLOUDFRONT_ID=${{ CLOUDFRONT_ID }}
           npm run ci-deploy
+
+      - name: Remove sensitive env file
+        run: rm -f apps/intake/env/.env.${{ github.event.inputs.environment }}
