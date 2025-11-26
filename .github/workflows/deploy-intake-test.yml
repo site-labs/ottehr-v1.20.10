@@ -15,11 +15,11 @@ on:
 jobs:
   display-variables:
     name: Display Variables
+    runs-on: ubuntu-latest
     # You can use configuration variables with the `vars` context for dynamic jobs
     environment: ${{ github.event.inputs.environment }}
     steps:
     - name: Use variables
-      runs-on: ubuntu-latest
       run: |
         echo "AWS_ROLE_TO_ASSUME : $AWS_ROLE_TO_ASSUME"
         echo "AWS_REGION : $AWS_REGION"
