@@ -19,6 +19,7 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
     steps:
     - name: Use variables
+      runs-on: ubuntu-latest
       run: |
         echo "AWS_ROLE_TO_ASSUME : $AWS_ROLE_TO_ASSUME"
         echo "AWS_REGION : $AWS_REGION"
