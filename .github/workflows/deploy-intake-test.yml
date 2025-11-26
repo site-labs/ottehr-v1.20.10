@@ -13,6 +13,18 @@ on:
           - production
 
 jobs:
+  display-variables:
+    name: Display Variables
+    # You can use configuration variables with the `vars` context for dynamic jobs
+    environment: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Use variables
+      run: |
+        echo "AWS_ROLE_TO_ASSUME : $AWS_ROLE_TO_ASSUME"
+        echo "AWS_REGION : $AWS_REGION"
+      env:
+        AWS_ROLE_TO_ASSUME: ${{ vars.AWS_ROLE_TO_ASSUME }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
   test-oidc:
     runs-on: ubuntu-latest
     permissions:
