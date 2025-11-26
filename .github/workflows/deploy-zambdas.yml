@@ -11,6 +11,11 @@ on:
         options:
           - development
           - production
+      zambda:
+        description: 'Which zambda to deploy (enter a zambda name from config/oystehr/ottehr-spec-zambdas.json, or empty/all to deploy all)'
+        required: false
+        default: 'all'
+        type: string
 
 jobs:
   deploy:
@@ -51,7 +56,13 @@ jobs:
       - name: Deploy zambdas
         working-directory: packages/zambdas
         run: |
-          ENV="${{ github.event.inputs.environment }}" npm run deploy-zambdas ${{ github.event.inputs.environment }}
+          ENV="${{ github.event.inputs.environment }}"
+          ZAMBDA_NAME="${{ github.event.inputs.zambda }}"
+          if [ "$ZAMBDA_NAME" = "all" ]; then
+            npm run deploy-zambdas $ENV
+          else
+            npm run deploy-zambdas $ENV $ZAMBDA_NAME
+          fi
 
       - name: Remove sensitive env file
         run: rm -f packages/zambdas/.env/${{ github.event.inputs.environment }}.json

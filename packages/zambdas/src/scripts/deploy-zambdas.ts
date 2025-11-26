@@ -19,9 +19,17 @@ interface DeployZambda {
   environments?: string[];
 }
 
+const zambdaSpecs = process.env.ZAMBDA_NAME
+  ? Object.values(ottehrSpec.zambdas).filter((spec) => spec.name === process.env.ZAMBDA_NAME)
+  : Object.values(ottehrSpec.zambdas);
+
+if (process.env.ZAMBDA_NAME && zambdaSpecs.length === 0) {
+  throw new Error('ZAMBDA_NAME environment variable is set but no matching zambda found in ottehr-spec-zambdas.json');
+}
+
 const ZAMBDAS: { [name: string]: DeployZambda } = {};
 
-Object.entries(ottehrSpec.zambdas).forEach(([_key, spec]) => {
+zambdaSpecs.forEach((spec) => {
   const anySpec = spec as any;
   if (spec.type !== 'http_open' && spec.type !== 'http_auth' && spec.type !== 'subscription' && spec.type !== 'cron') {
     throw new Error('Invalid zambda type found in spec file. Must be one of: http_open, http_auth, subscription, cron');
