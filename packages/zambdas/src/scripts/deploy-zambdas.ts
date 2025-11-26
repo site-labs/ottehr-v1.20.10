@@ -70,11 +70,9 @@ zambdaSpecs.forEach((spec) => {
   // if (!allowableEnvironments.includes(process.env.ENVIRONMENT as string) && spec.name === 'SEND-MESSAGE-CRON') {
   const allowableEnvironments = ['staging', 'demo', 'development', 'production'];
   if (!allowableEnvironments.includes(process.env.ENV as string)) {
-    console.log(
-      'TODO Skipping zambda because we only want it in these envs:',
-      allowableEnvironments.join(', '),
-      spec.name
-    );
+    console.log('process.env.ENV', process.env.ENV);
+    console.log('zambda.name', spec.name);
+    console.log('TODO Skipping zambda because we only want it in these envs:', allowableEnvironments.join(', '));
     return;
   }
 
