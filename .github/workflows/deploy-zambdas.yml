@@ -54,14 +54,16 @@ jobs:
             }
           EOF
       - name: Deploy zambdas
+        env:
+          ENV: ${{ github.event.inputs.environment }}
+          ZAMBDA_NAME: ${{ github.event.inputs.zambda }}
         working-directory: packages/zambdas
         run: |
-          ENV="${{ github.event.inputs.environment }}"
-          ZAMBDA_NAME="${{ github.event.inputs.zambda }}"
           if [ "$ZAMBDA_NAME" = "all" ]; then
-            npm run deploy-zambdas $ENV
+            unset ZAMBDA_NAME
+            npm run deploy-zambdas
           else
-            npm run deploy-zambdas $ENV $ZAMBDA_NAME
+            npm run deploy-zambdas
           fi
 
       - name: Remove sensitive env file
