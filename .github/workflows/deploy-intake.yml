@@ -24,6 +24,7 @@ jobs:
       AWS_REGION: ${{ vars.AWS_REGION }}
       S3_BUCKET: ${{ vars.S3_BUCKET }}
       CLOUDFRONT_ID: ${{ vars.CLOUDFRONT_ID }}
+      ENV: ${{ github.event.inputs.environment }}
       VITE_APP_IS_LOCAL: ${{ vars.VITE_APP_IS_LOCAL }}
       VITE_APP_NAME: ${{ vars.VITE_APP_NAME }}
       VITE_APP_CLIENT_ID: ${{ vars.VITE_APP_CLIENT_ID }}
@@ -101,7 +102,6 @@ jobs:
       - name: Run intake deploy script
         working-directory: apps/intake
         run: |
-          ENV=${{ github.event.inputs.environment }}
           npm run ci-deploy
 
       - name: Remove sensitive env file
