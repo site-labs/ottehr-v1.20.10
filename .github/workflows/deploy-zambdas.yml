@@ -61,9 +61,9 @@ jobs:
         run: |
           if [ "$ZAMBDA_NAME" = "all" ]; then
             unset ZAMBDA_NAME
-            npm run deploy-zambdas
+            npm run deploy-zambdas $ENV
           else
-            npm run deploy-zambdas
+            npm run deploy-zambdas $ENV $ZAMBDA_NAME
           fi
 
       - name: Remove sensitive env file
