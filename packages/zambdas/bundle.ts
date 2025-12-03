@@ -4,6 +4,7 @@ import * as esbuild from 'esbuild';
 import { copy } from 'esbuild-plugin-copy';
 import { type Options } from 'execa';
 import fs from 'fs';
+import path from 'path';
 // import ottehrSpec from '../../config/oystehr/ottehr-spec.json';
 import ottehrSpec from '../../config/oystehr/ottehr-spec-zambdas.json';
 
@@ -120,7 +121,8 @@ const zip = async (zambdas: ZambdaSpec[], assetsDir: string, assetsPath: string)
 
   await Promise.all(
     zambdas.map((zambda) => {
-      const sourceDir = `.dist/${zambda.src.substring('src/'.length)}.js`;
+      const originalName = path.basename(path.dirname(zambda.src));
+      const sourceDir = `.dist/${originalName}/index.js`;
       return zipZambda(sourceDir, assetsDir, assetsPath, zambda.zip);
     })
   );
