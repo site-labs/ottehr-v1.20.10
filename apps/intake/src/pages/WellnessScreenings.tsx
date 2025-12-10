@@ -166,13 +166,16 @@ export const WellnessScreening = (): JSX.Element => {
                           },
                         }}
                         onClick={async () => {
+                          const newWindow = window.open('', '_blank');
+                          const pdfWindow = newWindow ? newWindow : window;
+
                           if (viewLink.startsWith('blob:')) {
-                            window.open(viewLink, '_blank', 'noopener,noreferrer');
+                            pdfWindow.location.href = viewLink;
                           }
                           if (viewLink.startsWith('z3:') && apiClient) {
                             try {
                               const res = await apiClient.getZ3DownloadLink(viewLink);
-                              window.open(res.signedUrl, '_blank', 'noopener,noreferrer');
+                              pdfWindow.location.href = res.signedUrl;
                             } catch (err) {
                               console.error(err);
                             }
