@@ -166,7 +166,7 @@ export const WellnessScreening = (): JSX.Element => {
                           },
                         }}
                         onClick={async () => {
-                          const newWindow = window.open('', '_blank', 'noopener,noreferrer');
+                          const newWindow = window.open('', '_blank');
                           const pdfWindow = newWindow ? newWindow : window;
 
                           if (viewLink.startsWith('blob:')) {
