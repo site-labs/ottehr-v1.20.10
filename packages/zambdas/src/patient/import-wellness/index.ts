@@ -1,6 +1,15 @@
 import Oystehr, { OystehrConfig } from '@oystehr/sdk';
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { Appointment, DocumentReference, Encounter, Patient, Person, RelatedPerson } from 'fhir/r4b';
+import {
+  Appointment,
+  Condition,
+  DocumentReference,
+  Encounter,
+  Observation,
+  Patient,
+  Person,
+  RelatedPerson,
+} from 'fhir/r4b';
 import { getSecret, SecretsKeys } from 'utils';
 import { getAuth0Token, topLevelCatch, ZambdaInput } from '../../shared';
 import {
@@ -12,7 +21,14 @@ import {
   getRelatedPersonData,
   mergePersons,
 } from './fhirDataHelpers';
-import { isPdfFilesMatch, lookupRole } from './helpers';
+import {
+  createConditions,
+  createObservations,
+  isPdfFilesMatch,
+  lookupRole,
+  updateConditions,
+  updateObservations,
+} from './helpers';
 import { ResultData, WellnessRecord } from './types';
 import {
   createFhirResource,
@@ -98,6 +114,8 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
       patientRole: null,
       updatedResource: null,
       errorMessage: null,
+      observations: null,
+      conditions: null,
     };
 
     const updateResultData = (data: Record<string, any>): void => {
@@ -247,6 +265,20 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
           console.log('---getEncounterData completed successfully');
           await updateFhirResource<Encounter>(encounterData, fhirClient);
           console.log('---updateFhirResource completed successfully');
+
+          // Observations and conditions update
+          const observations: Observation[] = await updateObservations(
+            patient.id,
+            encounter.id,
+            wellnessRecord,
+            fhirClient
+          );
+          const conditions: Condition[] = await updateConditions(patient.id, encounter.id, wellnessRecord, fhirClient);
+          console.log('---Observations and Conditions updated successfully');
+          updateResultData({
+            observations: observations.map((obs) => obs.id),
+            conditions: conditions.map((cond) => cond.id),
+          });
         } catch (error) {
           console.log('---getEncounterData or updateFhirResource FAILED with error:', error);
           throw error;
@@ -359,11 +391,19 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
       }
 
       let encounter: Encounter | null = null;
+      let observations: Observation[] | null = null;
+      let conditions: Condition[] | null = null;
       if (appointment?.id && resultData.patient && resultData.location) {
         encounter = await createFhirResource<Encounter>(
           getEncounterData(wellnessRecord, resultData.patient, appointment.id, resultData.location),
           fhirClient
         ); // R19
+
+        // Observations and conditions creation
+        if (encounter?.id) {
+          observations = await createObservations(resultData.patient, encounter.id, wellnessRecord, fhirClient);
+          conditions = await createConditions(resultData.patient, encounter.id, wellnessRecord, fhirClient);
+        }
       }
 
       let documentReference: DocumentReference | null = null;
@@ -392,6 +432,8 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
         appointment: appointment?.id,
         encounter: encounter?.id,
         documentReference: documentReference?.id,
+        observations: observations?.map((obs) => obs.id),
+        conditions: conditions?.map((cond) => cond.id),
       });
     }
     const logRecord = await createLogRecord({ ...wellnessRecord, ...resultData }, m2mToken, PROJECT_ID, PROJECT_API); //R21: set output log record

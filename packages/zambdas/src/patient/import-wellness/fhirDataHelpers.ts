@@ -1,6 +1,27 @@
 import Oystehr from '@oystehr/sdk';
-import { Appointment, DocumentReference, Encounter, Patient, Person, RelatedPerson } from 'fhir/r4b';
+import {
+  Appointment,
+  Condition,
+  DocumentReference,
+  Encounter,
+  Observation,
+  Patient,
+  Person,
+  RelatedPerson,
+} from 'fhir/r4b';
+import {
+  getCOPDConditionData,
+  getDiabetesConditionData,
+  getHypercholesterolemiaConditionData,
+  getHypertensionConditionData,
+} from './conditionsHelpers';
 import { uploadPdfToZ3 } from './helpers';
+import {
+  getBloodPressureObservationData,
+  getHeartRateObservationData,
+  getHeightObservationData,
+  getWeightObservationData,
+} from './observationsHelpers';
 import { Gender, WellnessRecord } from './types';
 
 const WELLNESS_DEFAULTS = {
@@ -500,4 +521,95 @@ export const getDocumentReferenceData = async (
         }
       : {}),
   };
+};
+
+export const getObservationsData = (
+  wellnessRecord: WellnessRecord,
+  patientId: string,
+  encounterId: string
+): Observation[] => {
+  const observations: Observation[] = [];
+  if (![wellnessRecord.test_date, wellnessRecord.height].includes(undefined)) {
+    observations.push(
+      getHeightObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.height) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.weight].includes(undefined)) {
+    observations.push(
+      getWeightObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.weight) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.systolic, wellnessRecord.diastolic].includes(undefined)) {
+    observations.push(
+      getBloodPressureObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.systolic) || 0,
+        Number(wellnessRecord.diastolic) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.hr].includes(undefined)) {
+    observations.push(
+      getHeartRateObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.hr) || 0
+      )
+    );
+  }
+
+  return observations;
+};
+
+export const getConditionsData = (
+  wellnessRecord: WellnessRecord,
+  patientId: string,
+  encounterId: string
+): Condition[] => {
+  const conditions: Condition[] = [];
+  if (wellnessRecord.has_diabetes === 1) {
+    conditions.push(
+      getDiabetesConditionData(patientId, encounterId, wellnessRecord.test_date || '', wellnessRecord.created_at || '')
+    );
+  }
+  if (wellnessRecord.has_high_bp === 1) {
+    conditions.push(
+      getHypertensionConditionData(
+        patientId,
+        encounterId,
+        wellnessRecord.test_date || '',
+        wellnessRecord.created_at || ''
+      )
+    );
+  }
+  if (wellnessRecord.has_high_cholesterol === 1) {
+    conditions.push(
+      getHypercholesterolemiaConditionData(
+        patientId,
+        encounterId,
+        wellnessRecord.test_date || '',
+        wellnessRecord.created_at || ''
+      )
+    );
+  }
+  if (wellnessRecord.has_copd === 1) {
+    conditions.push(
+      getCOPDConditionData(patientId, encounterId, wellnessRecord.test_date || '', wellnessRecord.created_at || '')
+    );
+  }
+
+  return conditions;
 };

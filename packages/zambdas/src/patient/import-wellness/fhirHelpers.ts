@@ -4,6 +4,7 @@ import {
   DocumentReference,
   Encounter,
   FhirResource,
+  Observation,
   Patient,
   Person,
   Practitioner,
@@ -187,4 +188,46 @@ export const getDocumentReferenceByEncounterId = async (
     ],
   });
   return resources.unbundle() as DocumentReference[];
+};
+
+export const getObservationsByEncounterIdAndPatientId = async (
+  encounterId: string,
+  patientId: string,
+  fhirClient: Oystehr['fhir']
+): Promise<Observation[]> => {
+  const resources: Bundle<FhirResource> = await fhirClient.search({
+    resourceType: 'Observation',
+    params: [
+      {
+        name: 'encounter',
+        value: `Encounter/${encounterId}`,
+      },
+      {
+        name: 'subject',
+        value: `Patient/${patientId}`,
+      },
+    ],
+  });
+  return resources.unbundle() as Observation[];
+};
+
+export const getConditionsByEncounterIdAndPatientId = async (
+  encounterId: string,
+  patientId: string,
+  fhirClient: Oystehr['fhir']
+): Promise<Observation[]> => {
+  const resources: Bundle<FhirResource> = await fhirClient.search({
+    resourceType: 'Condition',
+    params: [
+      {
+        name: 'encounter',
+        value: `Encounter/${encounterId}`,
+      },
+      {
+        name: 'subject',
+        value: `Patient/${patientId}`,
+      },
+    ],
+  });
+  return resources.unbundle() as Observation[];
 };
