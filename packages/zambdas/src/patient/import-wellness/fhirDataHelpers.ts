@@ -7,19 +7,28 @@ import {
   Observation,
   Patient,
   Person,
+  QuestionnaireResponse,
   RelatedPerson,
 } from 'fhir/r4b';
 import {
   getCOPDConditionData,
   getDiabetesConditionData,
+  getHeartFailureConditionData,
   getHypercholesterolemiaConditionData,
   getHypertensionConditionData,
+  getKidneyDiseaseConditionData,
 } from './conditionsHelpers';
 import { uploadPdfToZ3 } from './helpers';
 import {
+  getBloodGlucoseObservationData,
   getBloodPressureObservationData,
+  getHbA1cObservationData,
+  getHDLCholesterolObservationData,
   getHeartRateObservationData,
   getHeightObservationData,
+  getLDLCholesterolObservationData,
+  getTotalCholesterolObservationData,
+  getTriglyceridesObservationData,
   getWeightObservationData,
 } from './observationsHelpers';
 import { Gender, WellnessRecord } from './types';
@@ -570,6 +579,61 @@ export const getObservationsData = (
       )
     );
   }
+  if (![wellnessRecord.test_date, wellnessRecord.tc].includes(undefined)) {
+    observations.push(
+      getTotalCholesterolObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.tc) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.hdl].includes(undefined)) {
+    observations.push(
+      getHDLCholesterolObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.hdl) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.ldl].includes(undefined)) {
+    observations.push(
+      getLDLCholesterolObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.ldl) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.tri].includes(undefined)) {
+    observations.push(
+      getTriglyceridesObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.tri) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.glucose].includes(undefined)) {
+    observations.push(
+      getBloodGlucoseObservationData(
+        encounterId,
+        patientId,
+        wellnessRecord.test_date || '',
+        Number(wellnessRecord.glucose) || 0
+      )
+    );
+  }
+  if (![wellnessRecord.test_date, wellnessRecord.a1c].includes(undefined)) {
+    observations.push(
+      getHbA1cObservationData(encounterId, patientId, wellnessRecord.test_date || '', Number(wellnessRecord.a1c) || 0)
+    );
+  }
 
   return observations;
 };
@@ -611,5 +675,92 @@ export const getConditionsData = (
     );
   }
 
+  if (wellnessRecord.has_kidney_disease === 1) {
+    conditions.push(
+      getKidneyDiseaseConditionData(
+        patientId,
+        encounterId,
+        wellnessRecord.test_date || '',
+        wellnessRecord.created_at || ''
+      )
+    );
+  }
+
+  if (wellnessRecord.has_heart_failure === 1) {
+    conditions.push(
+      getHeartFailureConditionData(
+        patientId,
+        encounterId,
+        wellnessRecord.test_date || '',
+        wellnessRecord.created_at || ''
+      )
+    );
+  }
+
   return conditions;
+};
+
+export const getQuestionnaireResponseData = (
+  wellnessRecord: WellnessRecord,
+  patientId: string,
+  encounterId: string
+): QuestionnaireResponse => {
+  // prefer finalized/test/created date for authored
+  const authored =
+    wellnessRecord.finalized_at ||
+    wellnessRecord.test_date ||
+    wellnessRecord.collection_date ||
+    wellnessRecord.created_at ||
+    new Date().toISOString();
+
+  const answerBoolean = (val: any): boolean | undefined => {
+    if (val === 1 || val === '1' || String(val).toLowerCase() === 'yes' || String(val).toLowerCase() === 'true')
+      return true;
+    if (val === 0 || val === '0' || String(val).toLowerCase() === 'no' || String(val).toLowerCase() === 'false')
+      return false;
+    return undefined;
+  };
+
+  const items: any[] = [];
+
+  const pushIfPresent = (linkId: string, text: string, value: any): void => {
+    if (value === undefined || value === null || value === '') {
+      return;
+    }
+    const boolVal = answerBoolean(value);
+    const answer = boolVal !== undefined ? { valueBoolean: boolVal } : { valueString: String(value) };
+    items.push({ linkId, text, answer: [answer] });
+  };
+
+  pushIfPresent('diagnosis', 'Diagnosis', wellnessRecord.diagnosis);
+  pushIfPresent('has_pcp', 'Has PCP', wellnessRecord.has_pcp);
+  pushIfPresent('has_visited_pcp', 'Has visited PCP', wellnessRecord.has_visited_pcp);
+  pushIfPresent('has_health_insurance', 'Has health insurance', wellnessRecord.has_health_insurance);
+  pushIfPresent('smokes', 'Smokes', wellnessRecord.smokes);
+  pushIfPresent('vapes', 'Vapes', wellnessRecord.vapes);
+  pushIfPresent('numbness_tingling', 'Numbness / Tingling', wellnessRecord.numbness_tingling);
+  pushIfPresent('abnormal_results', 'Abnormal results', wellnessRecord.abnormal_results);
+  pushIfPresent('given_pcp_flyer', 'Given PCP flyer', wellnessRecord.given_pcp_flyer);
+  pushIfPresent('ins_medicare', 'Insurance - Medicare', wellnessRecord.ins_medicare);
+  pushIfPresent('ins_medicaid', 'Insurance - Medicaid', wellnessRecord.ins_medicaid);
+  pushIfPresent('ins_commercial', 'Insurance - Commercial', wellnessRecord.ins_commercial);
+  pushIfPresent('ins_other', 'Insurance - Other', wellnessRecord.ins_other);
+  pushIfPresent('ins_multi', 'Multiple insurance', wellnessRecord.ins_multi);
+  pushIfPresent('insurance_type', 'Insurance type', wellnessRecord.insurance_type);
+  pushIfPresent('site', 'Site', wellnessRecord.site);
+  pushIfPresent('has_seen_pcp', 'Has seen PCP', wellnessRecord.has_seen_pcp);
+  pushIfPresent('has_insurance', 'Has insurance', wellnessRecord.has_insurance);
+  pushIfPresent('allergies', 'Allergies', wellnessRecord.allergies);
+  pushIfPresent('phi_consent', 'PHI Consent', wellnessRecord.phi_consent);
+  pushIfPresent('terms_of_service_consent', 'Terms of Service Consent', wellnessRecord.terms_of_service_consent);
+  pushIfPresent('signature', 'Signature', wellnessRecord.signature);
+
+  return {
+    resourceType: 'QuestionnaireResponse',
+    status: 'completed',
+    authored,
+    subject: { reference: `Patient/${patientId}` },
+    encounter: { reference: `Encounter/${encounterId}` },
+    item: items,
+  };
 };

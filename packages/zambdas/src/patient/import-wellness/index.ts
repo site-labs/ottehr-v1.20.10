@@ -8,6 +8,7 @@ import {
   Observation,
   Patient,
   Person,
+  QuestionnaireResponse,
   RelatedPerson,
 } from 'fhir/r4b';
 import { getSecret, SecretsKeys } from 'utils';
@@ -24,10 +25,12 @@ import {
 import {
   createConditions,
   createObservations,
+  createQuestionnaireResponse,
   isPdfFilesMatch,
   lookupRole,
   updateConditions,
   updateObservations,
+  updateQuestionnaireResponse,
 } from './helpers';
 import { ResultData, WellnessRecord } from './types';
 import {
@@ -116,6 +119,7 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
       errorMessage: null,
       observations: null,
       conditions: null,
+      questionnaireResponse: null,
     };
 
     const updateResultData = (data: Record<string, any>): void => {
@@ -274,10 +278,17 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
             fhirClient
           );
           const conditions: Condition[] = await updateConditions(patient.id, encounter.id, wellnessRecord, fhirClient);
+          const questionnaireResponse = await updateQuestionnaireResponse(
+            patient.id,
+            encounter.id,
+            wellnessRecord,
+            fhirClient
+          );
           console.log('---Observations and Conditions updated successfully');
           updateResultData({
             observations: observations.map((obs) => obs.id),
             conditions: conditions.map((cond) => cond.id),
+            questionnaireResponse: questionnaireResponse?.id,
           });
         } catch (error) {
           console.log('---getEncounterData or updateFhirResource FAILED with error:', error);
@@ -393,16 +404,23 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
       let encounter: Encounter | null = null;
       let observations: Observation[] | null = null;
       let conditions: Condition[] | null = null;
+      let questionnaireResponse: QuestionnaireResponse | null = null;
       if (appointment?.id && resultData.patient && resultData.location) {
         encounter = await createFhirResource<Encounter>(
           getEncounterData(wellnessRecord, resultData.patient, appointment.id, resultData.location),
           fhirClient
         ); // R19
 
-        // Observations and conditions creation
+        // Observations and Conditions and QuestionnaireResponse creation
         if (encounter?.id) {
           observations = await createObservations(resultData.patient, encounter.id, wellnessRecord, fhirClient);
           conditions = await createConditions(resultData.patient, encounter.id, wellnessRecord, fhirClient);
+          questionnaireResponse = await createQuestionnaireResponse(
+            resultData.patient,
+            encounter.id,
+            wellnessRecord,
+            fhirClient
+          );
         }
       }
 
@@ -434,6 +452,7 @@ export const index = async ({ body, secrets }: ZambdaInput): Promise<APIGatewayP
         documentReference: documentReference?.id,
         observations: observations?.map((obs) => obs.id),
         conditions: conditions?.map((cond) => cond.id),
+        questionnaireResponse: questionnaireResponse?.id,
       });
     }
     const logRecord = await createLogRecord({ ...wellnessRecord, ...resultData }, m2mToken, PROJECT_ID, PROJECT_API); //R21: set output log record

@@ -95,3 +95,57 @@ export const getCOPDConditionData = (
   onsetDateTime: onsetDate,
   recordedDate: recordDate,
 });
+
+export const getKidneyDiseaseConditionData = (
+  patientId: string,
+  encounterId: string,
+  onsetDate: string,
+  recordDate: string
+): Condition => ({
+  resourceType: 'Condition',
+  clinicalStatus: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-clinical', code: 'active' }] },
+  verificationStatus: {
+    coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-ver-status', code: 'confirmed' }],
+  },
+  code: {
+    coding: [
+      {
+        system: 'http://hl7.org/fhir/sid/icd-10',
+        code: 'N18.9',
+        display: 'Chronic kidney disease, unspecified',
+      },
+    ],
+    text: 'Chronic kidney disease',
+  },
+  subject: { reference: `Patient/${patientId}` },
+  encounter: { reference: `Encounter/${encounterId}` },
+  onsetDateTime: onsetDate,
+  recordedDate: recordDate,
+});
+
+export const getHeartFailureConditionData = (
+  patientId: string,
+  encounterId: string,
+  onsetDate: string,
+  recordDate: string
+): Condition => ({
+  resourceType: 'Condition',
+  clinicalStatus: { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-clinical', code: 'active' }] },
+  verificationStatus: {
+    coding: [{ system: 'http://terminology.hl7.org/CodeSystem/condition-ver-status', code: 'confirmed' }],
+  },
+  code: {
+    coding: [
+      {
+        system: 'http://hl7.org/fhir/sid/icd-10',
+        code: 'I50.9',
+        display: 'Heart failure, unspecified',
+      },
+    ],
+    text: 'Heart failure',
+  },
+  subject: { reference: `Patient/${patientId}` },
+  encounter: { reference: `Encounter/${encounterId}` },
+  onsetDateTime: onsetDate,
+  recordedDate: recordDate,
+});

@@ -231,3 +231,24 @@ export const getConditionsByEncounterIdAndPatientId = async (
   });
   return resources.unbundle() as Observation[];
 };
+
+export const getQuestionnaireResponsesByEncounterIdAndPatientId = async (
+  encounterId: string,
+  patientId: string,
+  fhirClient: Oystehr['fhir']
+): Promise<any[]> => {
+  const resources: Bundle<FhirResource> = await fhirClient.search({
+    resourceType: 'QuestionnaireResponse',
+    params: [
+      {
+        name: 'encounter',
+        value: `Encounter/${encounterId}`,
+      },
+      {
+        name: 'subject',
+        value: `Patient/${patientId}`,
+      },
+    ],
+  });
+  return resources.unbundle() as any[];
+};

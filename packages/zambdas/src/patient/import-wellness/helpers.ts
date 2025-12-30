@@ -1,8 +1,12 @@
 import Oystehr from '@oystehr/sdk';
 import crypto from 'crypto';
-import { Condition, DocumentReference, Observation } from 'fhir/r4b';
-import { getConditionsData, getObservationsData } from './fhirDataHelpers';
-import { getConditionsByEncounterIdAndPatientId, getObservationsByEncounterIdAndPatientId } from './fhirHelpers';
+import { Condition, DocumentReference, Observation, QuestionnaireResponse } from 'fhir/r4b';
+import { getConditionsData, getObservationsData, getQuestionnaireResponseData } from './fhirDataHelpers';
+import {
+  getConditionsByEncounterIdAndPatientId,
+  getObservationsByEncounterIdAndPatientId,
+  getQuestionnaireResponsesByEncounterIdAndPatientId,
+} from './fhirHelpers';
 import { LogRecord, ResultData, Role, WellnessRecord } from './types';
 import { createFhirResource } from './utils';
 
@@ -486,6 +490,30 @@ export const createConditions = async (
     })
   );
   return conditions.filter(Boolean) as Condition[];
+};
+
+export const createQuestionnaireResponse = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<QuestionnaireResponse | null> => {
+  const qrData = getQuestionnaireResponseData(wellnessRecord, patientId, encounterId);
+  const questionnaireResponse = await createFhirResource<QuestionnaireResponse>(qrData, fhirClient);
+  return questionnaireResponse;
+};
+export const updateQuestionnaireResponse = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<QuestionnaireResponse | null> => {
+  const existing = await getQuestionnaireResponsesByEncounterIdAndPatientId(encounterId, patientId, fhirClient);
+  if (existing && existing.length > 0) {
+    await Promise.all(existing.map((qr) => fhirClient.delete({ resourceType: 'QuestionnaireResponse', id: qr.id! })));
+  }
+  const questionnaireResponse = await createQuestionnaireResponse(patientId, encounterId, wellnessRecord, fhirClient);
+  return questionnaireResponse;
 };
 
 export const updateObservations = async (

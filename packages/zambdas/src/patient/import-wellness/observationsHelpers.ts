@@ -81,3 +81,113 @@ export const getHeartRateObservationData = (
   effectiveDateTime: effectiveDate,
   valueQuantity: { value, unit: 'beats/minute', system: 'http://unitsofmeasure.org', code: 'beats/min' },
 });
+
+export const getTotalCholesterolObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: { coding: [{ system: 'http://loinc.org', code: '2093-3', display: 'Cholesterol, Total' }] },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: 'mg/dL', system: 'http://unitsofmeasure.org', code: 'mg/dL' },
+});
+
+export const getHDLCholesterolObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: { coding: [{ system: 'http://loinc.org', code: '2085-9', display: 'Cholesterol in HDL' }] },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: 'mg/dL', system: 'http://unitsofmeasure.org', code: 'mg/dL' },
+});
+
+export const getLDLCholesterolObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: { coding: [{ system: 'http://loinc.org', code: '13457-7', display: 'Cholesterol in LDL' }] },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: 'mg/dL', system: 'http://unitsofmeasure.org', code: 'mg/dL' },
+});
+
+export const getTriglyceridesObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: { coding: [{ system: 'http://loinc.org', code: '2571-8', display: 'Triglyceride' }] },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: 'mg/dL', system: 'http://unitsofmeasure.org', code: 'mg/dL' },
+});
+
+export const getBloodGlucoseObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: { coding: [{ system: 'http://loinc.org', code: '2339-0', display: 'Glucose [Mass/volume] in Blood' }] },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: 'mg/dL', system: 'http://unitsofmeasure.org', code: 'mg/dL' },
+});
+
+export const getHbA1cObservationData = (
+  encounterId: string,
+  patientId: string,
+  effectiveDate: string,
+  value: number
+): Observation => ({
+  resourceType: 'Observation',
+  status: 'final',
+  encounter: { reference: `Encounter/${encounterId}` },
+  category: [
+    { coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory' }] },
+  ],
+  code: {
+    coding: [{ system: 'http://loinc.org', code: '4548-4', display: 'Hemoglobin A1c/Hemoglobin.total in Blood' }],
+  },
+  subject: { reference: `Patient/${patientId}` },
+  effectiveDateTime: effectiveDate,
+  valueQuantity: { value, unit: '%', system: 'http://unitsofmeasure.org', code: '%' },
+});
