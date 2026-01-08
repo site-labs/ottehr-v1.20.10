@@ -754,6 +754,9 @@ export const getQuestionnaireResponseData = (
   pushIfPresent('phi_consent', 'PHI Consent', wellnessRecord.phi_consent);
   pushIfPresent('terms_of_service_consent', 'Terms of Service Consent', wellnessRecord.terms_of_service_consent);
   pushIfPresent('signature', 'Signature', wellnessRecord.signature);
+  pushIfPresent('subjective', 'Subjective', wellnessRecord.subjective);
+  pushIfPresent('assessment', 'Assessment', wellnessRecord.assessment);
+  pushIfPresent('plan', 'Plan', wellnessRecord.plan);
 
   return {
     resourceType: 'QuestionnaireResponse',
