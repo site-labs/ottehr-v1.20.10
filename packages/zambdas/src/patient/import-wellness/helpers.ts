@@ -1,7 +1,14 @@
 import Oystehr from '@oystehr/sdk';
 import crypto from 'crypto';
-import { DocumentReference } from 'fhir/r4b';
+import { Condition, DocumentReference, Observation, QuestionnaireResponse } from 'fhir/r4b';
+import { getConditionsData, getObservationsData, getQuestionnaireResponseData } from './fhirDataHelpers';
+import {
+  getConditionsByEncounterIdAndPatientId,
+  getObservationsByEncounterIdAndPatientId,
+  getQuestionnaireResponsesByEncounterIdAndPatientId,
+} from './fhirHelpers';
 import { LogRecord, ResultData, Role, WellnessRecord } from './types';
+import { createFhirResource } from './utils';
 
 export const appendToCSV = async (
   wellnessRecord: WellnessRecord & ResultData,
@@ -453,4 +460,92 @@ export const uploadPdfToZ3 = async (
   await z3Client.uploadFile({ bucketName, 'objectPath+': objectKey, file: blob });
 
   return `z3://${bucketName}/${objectKey}`;
+};
+
+export const createObservations = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<Observation[]> => {
+  const observationsData = getObservationsData(wellnessRecord, patientId, encounterId);
+  const observations = await Promise.all(
+    observationsData.map(async (observation) => {
+      return await createFhirResource<Observation>(observation, fhirClient);
+    })
+  );
+  return observations.filter(Boolean) as Observation[];
+};
+
+export const createConditions = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<Condition[]> => {
+  const conditionsData = getConditionsData(wellnessRecord, patientId, encounterId);
+  const conditions = await Promise.all(
+    conditionsData.map(async (condition) => {
+      return await createFhirResource<Condition>(condition, fhirClient);
+    })
+  );
+  return conditions.filter(Boolean) as Condition[];
+};
+
+export const createQuestionnaireResponse = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<QuestionnaireResponse | null> => {
+  const qrData = getQuestionnaireResponseData(wellnessRecord, patientId, encounterId);
+  const questionnaireResponse = await createFhirResource<QuestionnaireResponse>(qrData, fhirClient);
+  return questionnaireResponse;
+};
+export const updateQuestionnaireResponse = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<QuestionnaireResponse | null> => {
+  const existing = await getQuestionnaireResponsesByEncounterIdAndPatientId(encounterId, patientId, fhirClient);
+  if (existing && existing.length > 0) {
+    await Promise.all(existing.map((qr) => fhirClient.delete({ resourceType: 'QuestionnaireResponse', id: qr.id! })));
+  }
+  const questionnaireResponse = await createQuestionnaireResponse(patientId, encounterId, wellnessRecord, fhirClient);
+  return questionnaireResponse;
+};
+
+export const updateObservations = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<Observation[]> => {
+  // fetch observations by patientId and encounterId
+  const existingObservations = await getObservationsByEncounterIdAndPatientId(encounterId, patientId, fhirClient);
+  // delete existing observations
+  await Promise.all(existingObservations.map((obs) => fhirClient.delete({ resourceType: 'Observation', id: obs.id! })));
+  // create oservations with new data
+  const observations = await createObservations(patientId, encounterId, wellnessRecord, fhirClient);
+
+  return observations;
+};
+
+export const updateConditions = async (
+  patientId: string,
+  encounterId: string,
+  wellnessRecord: WellnessRecord,
+  fhirClient: Oystehr['fhir']
+): Promise<Condition[]> => {
+  // fetch conditions by patientId and encounterId
+  const existingConditions = await getConditionsByEncounterIdAndPatientId(encounterId, patientId, fhirClient);
+  // delete existing conditions
+  await Promise.all(
+    existingConditions.map((condition) => fhirClient.delete({ resourceType: 'Condition', id: condition.id! }))
+  );
+  // create conditions with new data
+  const conditions = await createConditions(patientId, encounterId, wellnessRecord, fhirClient);
+
+  return conditions;
 };
